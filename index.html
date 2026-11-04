@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>漁電共生案場 3D 建置與智慧監控模擬</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+:root{
+  --bg:#0f172a; --panel:#1e293b; --line:#334155; --fg:#f8fafc; --muted:#94a3b8;
+  --accent:#10b981; --ok:#38bdf8;
+  --f-body:"Noto Sans TC",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",monospace;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.6}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 400px;height:100%}
+.stage{position:relative;min-width:0;min-height:0;overflow:hidden;background:#090d16}
+#c{display:block;width:100%;height:100%;touch-action:none;cursor:grab}
+#c:active{cursor:grabbing}
+.hud{position:absolute;left:16px;top:14px;pointer-events:none;display:flex;flex-direction:column;gap:2px;
+  background:rgba(15,23,42,.75);backdrop-filter:blur(8px);padding:12px 16px;border-radius:10px;border:1px solid var(--line);max-width:calc(100% - 180px)}
+.eyebrow{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--accent);text-transform:uppercase}
+.hud h1{margin:0;font-size:20px;font-weight:900}
+.spec{font-family:var(--f-mono);font-size:11.5px;color:var(--muted)}
+.stamp{position:absolute;right:16px;top:16px;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;color:var(--accent);border:1.5px solid var(--accent);background:rgba(15,23,42,.7);padding:4px 10px;border-radius:4px}
+.views{position:absolute;right:16px;top:56px;display:flex;flex-direction:column;gap:6px}
+.views button,.controls button{font:inherit;font-size:12.5px;background:rgba(30,41,59,.85);color:var(--fg);border:1px solid var(--line);border-radius:6px;padding:6px 12px;cursor:pointer;backdrop-filter:blur(4px)}
+.views button:hover,.controls button:hover{border-color:var(--accent)}
+.views button.on{border-color:var(--accent);color:var(--accent);background:rgba(16,185,129,.15)}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.legend{position:absolute;left:16px;bottom:14px;display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--muted);pointer-events:none;max-width:70%;
+  background:rgba(15,23,42,.75);border:1px solid var(--line);padding:8px 12px;border-radius:8px}
+.legend i{width:10px;height:10px;border-radius:2px;display:inline-block;margin-right:5px;vertical-align:-1px}
+.hint{position:absolute;right:16px;bottom:14px;font-family:var(--f-mono);font-size:11px;color:var(--muted);pointer-events:none}
+aside{background:var(--panel);border-left:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.controls{display:flex;gap:8px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:center}
+.controls button.primary{background:var(--accent);color:#0f172a;border-color:var(--accent);font-weight:700}
+.count{margin-left:auto;font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.bar{height:3px;background:var(--line)} .bar div{height:100%;background:var(--accent);transition:width .4s}
+.detail{padding:16px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:9px}
+.detail .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;color:var(--accent);text-transform:uppercase}
+.detail h2{margin:0;font-size:19px}
+.detail .meta{font-family:var(--f-mono);font-size:12px;color:var(--muted)}
+.detail ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:4px}
+.detail .dims{font-family:var(--f-mono);font-size:12px;background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.3);border-radius:6px;padding:8px 10px;color:#6ee7b7}
+.steps{list-style:none;margin:0;padding:6px 0;overflow:auto;flex:1;min-height:0}
+.steps button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:30px 1fr auto;gap:8px;width:100%;padding:8px 16px;cursor:pointer;color:var(--muted)}
+.steps .n,.steps .w{font-family:var(--f-mono);font-size:12px}
+.steps li.done button{color:var(--fg)} .steps li.done .n{color:var(--ok)}
+.steps li.on button{color:var(--fg);background:rgba(16,185,129,.1);box-shadow:inset 3px 0 0 var(--accent)}
+.steps li.on .n{color:var(--accent)}
+.foot{padding:12px 16px;font-size:11px;color:var(--muted);border-top:1px solid var(--line)}
+@media (max-width:880px){.app{grid-template-columns:1fr;grid-template-rows:62vh auto;height:auto}aside{border-left:0;border-top:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="stage" id="stage">
+    <canvas id="c" aria-label="漁電共生案場 3D 模型"></canvas>
+    <div class="hud">
+      <div class="eyebrow">Agrivoltaics · 漁電共生 3D 模擬</div>
+      <h1>智慧綠能養殖示範案場</h1>
+      <div class="spec">案場容量 500 kW · 魚塭面積 5,000 m² · 智慧水質聯防</div>
+    </div>
+    <span class="stamp">AI 智慧監控</span>
+    <div class="views" role="group" aria-label="視角切換">
+      <button type="button" data-v="site" class="on">全區鳥瞰</button>
+      <button type="button" data-v="pond">水面視角</button>
+      <button type="button" data-v="panel">光電板側</button>
+      <button type="button" data-v="top">正上方</button>
+    </div>
+    <div class="legend" id="legend">
+      <span><i style="background:#3b82f6"></i>養殖水池</span>
+      <span><i style="background:#64748b"></i>抗風鋼構</span>
+      <span><i style="background:#1e293b;border:1px solid #38bdf8"></i>太陽能面板</span>
+      <span><i style="background:#10b981"></i>IoT 增氧機</span>
+      <span><i style="background:#f59e0b"></i>本階段</span>
+    </div>
+    <div class="hint">滑鼠左鍵旋轉 · 右鍵平移 · 滾輪縮放</div>
+  </div>
+  <aside>
+    <div class="controls">
+      <button id="prev" type="button">上一步</button>
+      <button id="play" type="button" class="primary">播放動畫</button>
+      <button id="next" type="button">下一步</button>
+      <span class="count" id="count"></span>
+    </div>
+    <div class="bar"><div id="bar"></div></div>
+    <section class="detail" id="detail" aria-live="polite"></section>
+    <ul class="steps" id="steps"></ul>
+    <div class="foot">結合綠能發電與養殖，透過 AI 水質預測與自動增氧維持最佳生態溶氧量。</div>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const STAGES=[
+  {t:"魚塭整地與土方工程",w:"2 週",tag:"Civil",
+   pts:["魚塭水位調整與周邊堤岸整修","底部淤泥清理與地質結構夯實","設置進排水系統與管線預埋"],
+   dims:"基地範圍 5,000 m² ｜ 養殖水深平均 1.5m"},
+  {t:"打基樁與抗風鋼構架設",w:"3 週",tag:"Structure",
+   pts:["打入抗風防震深度鋼基樁","架設高架化熱浸鍍鋅鋼構支架","確保離地淨高大於 3 公尺以利機具作業"],
+   dims:"支架高度 3.2m ｜ 結構抗風等級 17 級"},
+  {t:"鋪設太陽能光電面板",w:"3 週",tag:"Solar",
+   pts:["安裝高效率雙面發電太陽能板","依黃金比例留設適當遮蔽率（約 40%）","兼顧養殖之日照與生長需求"],
+   dims:"光電模組 450W × 1,120 片 ｜ 總容量 500kW"},
+  {t:"IoT 水質感測與自動增氧設備",w:"2 週",tag:"IoT & Sensors",
+   pts:["部署水下溶氧、水溫與 pH 值感測器","建置太陽能自動增氧機與 AI 聯防控制箱","串接無線通訊模組回傳即時數據"],
+   dims:"感測節點 6 處 ｜ 變頻增氧機 4 台"},
+  {t:"正式併網發電與 AI 智慧營運",w:"持續營運",tag:"Operation",
+   pts:["太陽能系統正式併網送電運轉","啟動 AI 漁業水質異常預警與自動投餵模型","產量履歷自動合規追蹤"],
+   dims:"預估年發電量 65 萬度 ｜ 水產存活率提升 15%"}
+];
+
+const canvas=document.getElementById('c');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+renderer.setSize(canvas.clientWidth,canvas.clientHeight);
+renderer.shadowMap.enabled=true;
+const scene=new THREE.Scene();
+scene.background=new THREE.Color('#0f172a');
+scene.fog=new THREE.Fog('#0f172a',40,120);
+
+const camera=new THREE.PerspectiveCamera(45,canvas.clientWidth/canvas.clientHeight,0.1,500);
+
+scene.add(new THREE.HemisphereLight(0xffffff,0x444444,0.6));
+const sun=new THREE.DirectionalLight(0xffffff,1.2);
+sun.position.set(20,40,20);
+sun.castShadow=true;
+scene.add(sun);
+
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(100,100),new THREE.MeshStandardMaterial({color:0x1e293b,roughness:0.8}));
+ground.rotation.x=-Math.PI/2;
+ground.receiveShadow=true;
+scene.add(ground);
+
+const pond=new THREE.Mesh(new THREE.BoxGeometry(24,0.2,16),new THREE.MeshStandardMaterial({color:0x3b82f6,roughness:0.2,transparent:true,opacity:0.8}));
+pond.position.set(0,0.1,0);
+scene.add(pond);
+
+const groups=STAGES.map(()=>{const g=new THREE.Group();g.visible=false;scene.add(g);return g;});
+
+const d1=new THREE.Mesh(new THREE.BoxGeometry(28,0.6,20),new THREE.MeshStandardMaterial({color:0x334155,roughness:0.9}));
+d1.position.set(0,0.3,0);
+groups[0].add(d1);
+
+for(let x=-10;x<=10;x+=5){
+  for(let z=-6;z<=6;z+=4){
+    const p=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,3),new THREE.MeshStandardMaterial({color:0x64748b,metalness:0.8}));
+    p.position.set(x,1.5,z);
+    groups[1].add(p);
+  }
+}
+const beam=new THREE.Mesh(new THREE.BoxGeometry(22,0.3,14),new THREE.MeshStandardMaterial({color:0x94a3b8,metalness:0.6}));
+beam.position.set(0,3,0);
+groups[1].add(beam);
+
+const panelGroup=new THREE.Group();
+for(let x=-9;x<=9;x+=3){
+  for(let z=-5;z<=5;z+=3){
+    const pan=new THREE.Mesh(new THREE.BoxGeometry(2.6,0.1,2.6),new THREE.MeshStandardMaterial({color:0x0f172a,metalness:0.9,roughness:0.1}));
+    pan.position.set(x,3.2,z);
+    pan.rotation.x=0.15;
+    panelGroup.add(pan);
+  }
+}
+groups[2].add(panelGroup);
+
+const aerator=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,0.4),new THREE.MeshStandardMaterial({color:0x10b981}));
+aerator.position.set(-4,0.3,2);
+groups[3].add(aerator);
+
+const sensor=new THREE.Mesh(new THREE.BoxGeometry(0.4,1.2,0.4),new THREE.MeshStandardMaterial({color:0xf59e0b}));
+sensor.position.set(6,0.6,-3);
+groups[3].add(sensor);
+
+const lightIndicator=new THREE.Mesh(new THREE.SphereGeometry(0.5),new THREE.MeshBasicMaterial({color:0x38bdf8}));
+lightIndicator.position.set(0,4.5,0);
+groups[4].add(lightIndicator);
+
+let cur=-1,playing=false,timer=null;
+const $steps=document.getElementById('steps'),$detail=document.getElementById('detail');
+STAGES.forEach((s,i)=>{
+  const li=document.createElement('li');
+  li.innerHTML=`<button type="button"><span class="n">${String(i+1).padStart(2,'0')}</span><span>${s.t}</span><span class="w">${s.w}</span></button>`;
+  li.querySelector('button').onclick=()=>{halt();go(i);};
+  $steps.appendChild(li);
+});
+
+function go(i){
+  i=Math.max(0,Math.min(STAGES.length-1,i));
+  cur=i;
+  groups.forEach((g,k)=>g.visible=k<=i);
+  const s=STAGES[i];
+  $detail.innerHTML=`<div class="tag">Step ${String(i+1).padStart(2,'0')} · ${s.tag}</div><h2>${s.t}</h2><div class="meta">預估工期 ${s.w}</div><ul>${s.pts.map(p=>`<li>${p}</li>`).join('')}</ul><div class="dims">${s.dims}</div>`;
+  [...$steps.children].forEach((li,k)=>li.className=k<i?'done':k===i?'on':'');
+  document.getElementById('count').textContent=`${i+1} / ${STAGES.length}`;
+  document.getElementById('bar').style.width=((i+1)/STAGES.length*100)+'%';
+}
+function halt(){playing=false;clearInterval(timer);document.getElementById('play').textContent='播放動畫';}
+
+document.getElementById('prev').onclick=()=>{halt();go(cur-1);};
+document.getElementById('next').onclick=()=>{halt();go(cur+1);};
+document.getElementById('play').onclick=()=>{
+  if(playing){halt();return;}
+  playing=true;document.getElementById('play').textContent='暫停';
+  if(cur>=STAGES.length-1)go(0);else go(cur+1);
+  timer=setInterval(()=>{if(cur>=STAGES.length-1){halt();return;}go(cur+1);},3500);
+};
+
+const VIEWS={
+  site:{pos:[0,18,28],target:[0,0,0]},
+  pond:{pos:[0,3,10],target:[0,1,0]},
+  panel:{pos:[15,6,0],target:[0,3,0]},
+  top:{pos:[0,35,0.1],target:[0,0,0]}
+};
+let camPos=new THREE.Vector3(...VIEWS.site.pos),camTarget=new THREE.Vector3(...VIEWS.site.target);
+document.querySelectorAll('.views [data-v]').forEach(b=>b.onclick=function(){
+  const v=VIEWS[this.dataset.v];
+  camPos.set(...v.pos);camTarget.set(...v.target);
+  document.querySelectorAll('.views [data-v]').forEach(x=>x.classList.toggle('on',x===this));
+});
+
+let isDragging=false,prevMouse={x:0,y:0};
+canvas.onmousedown=e=>{isDragging=true;prevMouse={x:e.clientX,y:e.clientY};};
+window.onmouseup=()=>isDragging=false;
+canvas.onmousemove=e=>{
+  if(!isDragging)return;
+  const dx=e.clientX-prevMouse.x,dy=e.clientY-prevMouse.y;
+  camPos.x-=dx*0.05;camPos.y+=dy*0.05;
+  prevMouse={x:e.clientX,y:e.clientY};
+};
+
+function animate(){
+  requestAnimationFrame(animate);
+  camera.position.lerp(camPos,0.08);
+  camera.lookAt(camTarget);
+  renderer.render(scene,camera);
+}
+go(0);
+animate();
+window.onresize=()=>{renderer.setSize(canvas.clientWidth,canvas.clientHeight);camera.aspect=canvas.clientWidth/canvas.clientHeight;camera.updateProjectionMatrix();};
+})();
+</script>
+</body>
+</html>
