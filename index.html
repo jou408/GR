@@ -34,10 +34,11 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             </div>
         </div>
         <div class="flex space-x-2">
-            <button onclick="switchMainTab('anim')" id="btn-tab-anim" class="px-4 py-2 bg-emerald-600 rounded-lg text-sm font-medium transition hover:bg-emerald-500 shadow-lg shadow-emerald-900/35">
+            <!-- 已修正引號巢狀問題 -->
+            <button onclick="switchMainTab('anim')" id="btn-tab-anim" class="px-4 py-2 bg-emerald-600 rounded-lg text-sm font-medium transition hover:bg-emerald-500 shadow-lg shadow-emerald-900/35 text-slate-950 font-bold">
                 <i class="fa-solid fa-cubes mr-1.5"></i> 3D 案場建置模擬
             </button>
-            <button onclick="switchMainTab("dashboard")" id="btn-tab-dashboard" class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm font-medium transition hover:bg-slate-700 text-slate-300">
+            <button onclick="switchMainTab('dashboard')" id="btn-tab-dashboard" class="px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm font-medium transition hover:bg-slate-700 text-slate-300">
                 <i class="fa-solid fa-chart-line mr-1.5"></i> 多案場 IoT 戰情與檢修
             </button>
         </div>
@@ -50,7 +51,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         <section id="section-anim" class="col-span-12 grid grid-cols-1 lg:grid-cols-12 h-full absolute inset-0 bg-slate-950 z-10">
             <!-- 左側 3D 畫布與 HUD -->
             <div class="col-span-12 lg:col-span-8 relative h-full bg-[#090d16]" id="stage">
-                <canvas id="c" aria-label="漁電共生案場 3D 模型"></canvas>
+                <canvas id="c" aria-label="漁電共生案場 3D 模型" class="w-full h-full block"></canvas>
                 <div class="absolute left-4 top-4 pointer-events-none flex flex-col gap-1 bg-slate-900/80 backdrop-blur-md p-4 rounded-xl border border-slate-800">
                     <span class="text-xs font-mono tracking-widest text-emerald-400 uppercase">Interactive 3D Simulation</span>
                     <h2 class="text-xl font-bold">漁電共生案場生命週期模擬</h2>
@@ -61,7 +62,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 </div>
                 <!-- 視角切換 -->
                 <div class="absolute right-4 top-16 flex flex-col gap-1.5">
-                    <button type="button" data-v="site" class="view-btn on px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">全區鳥瞰</button>
+                    <button type="button" data-v="site" class="view-btn on px-3 py-1.5 bg-emerald-600 text-slate-950 font-bold text-xs rounded-md border border-slate-700 text-left transition font-mono">全區鳥瞰</button>
                     <button type="button" data-v="pond" class="view-btn px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">水面視角</button>
                     <button type="button" data-v="panel" class="view-btn px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">光電板側</button>
                     <button type="button" data-v="top" class="view-btn px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">正上方</button>
@@ -167,6 +168,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 dashSec.classList.add('hidden');
                 btnAnim.className = "px-4 py-2 bg-emerald-600 rounded-lg text-sm font-medium transition hover:bg-emerald-500 shadow-lg shadow-emerald-900/35 text-slate-950 font-bold";
                 btnDash.className = "px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm font-medium transition hover:bg-slate-700 text-slate-300";
+                // 觸發視窗大小重整以確保 3D 畫布正常顯示
+                window.dispatchEvent(new Event('resize'));
             } else {
                 animSec.classList.add('hidden');
                 dashSec.classList.remove('hidden');
@@ -329,8 +332,10 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         go(0);
         animate();
         window.onresize=()=>{
-          const w = canvas.parentElement.clientWidth;
-          const h = canvas.parentElement.clientHeight;
+          const container = canvas.parentElement;
+          if(!container) return;
+          const w = container.clientWidth;
+          const h = container.clientHeight;
           renderer.setSize(w, h);
           camera.aspect = w / h;
           camera.updateProjectionMatrix();
