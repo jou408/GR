@@ -34,7 +34,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             </div>
         </div>
         <div class="flex space-x-2">
-            <!-- 已修正引號巢狀問題 -->
             <button onclick="switchMainTab('anim')" id="btn-tab-anim" class="px-4 py-2 bg-emerald-600 rounded-lg text-sm font-medium transition hover:bg-emerald-500 shadow-lg shadow-emerald-900/35 text-slate-950 font-bold">
                 <i class="fa-solid fa-cubes mr-1.5"></i> 3D 案場建置模擬
             </button>
@@ -55,7 +54,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 <div class="absolute left-4 top-4 pointer-events-none flex flex-col gap-1 bg-slate-900/80 backdrop-blur-md p-4 rounded-xl border border-slate-800">
                     <span class="text-xs font-mono tracking-widest text-emerald-400 uppercase">Interactive 3D Simulation</span>
                     <h2 class="text-xl font-bold">漁電共生案場生命週期模擬</h2>
-                    <span class="text-xs font-mono text-slate-400">標準示範模組 · 5,000 m² 魚塭</span>
+                    <span class="text-xs font-mono text-slate-400">抗風立體斜撐鋼構模組 · 5,000 m² 魚塭</span>
                 </div>
                 <div class="absolute right-4 top-4 font-mono text-xs text-emerald-400 border border-emerald-500/40 bg-emerald-950/60 px-3 py-1.5 rounded-lg">
                     <i class="fa-solid fa-circle text-[8px] animate-pulse mr-1.5"></i> 3D 渲染運行中
@@ -69,7 +68,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 </div>
                 <div class="absolute left-4 bottom-4 flex flex-wrap gap-3 text-xs text-slate-400 bg-slate-900/80 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-800 pointer-events-none">
                     <span><i class="fa-solid fa-square text-blue-500 mr-1"></i>養殖水池</span>
-                    <span><i class="fa-solid fa-square text-slate-500 mr-1"></i>抗風鋼構</span>
+                    <span><i class="fa-solid fa-square text-slate-400 mr-1"></i>立體斜撐鋼構</span>
                     <span><i class="fa-solid fa-square text-slate-800 border border-sky-400 mr-1"></i>太陽能面板</span>
                     <span><i class="fa-solid fa-square text-emerald-500 mr-1"></i>IoT 增氧機</span>
                 </div>
@@ -110,9 +109,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             </div>
 
             <!-- 案場卡片清單 -->
-            <div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6" id="site-grid">
-                <!-- 動態載入案場資料 -->
-            </div>
+            <div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6" id="site-grid"></div>
 
             <!-- 底部 IoT 歷史趨勢與工單戰情 -->
             <div class="col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6 pb-12">
@@ -123,7 +120,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                     </div>
                     <div class="h-48 bg-slate-950/80 border border-slate-800/80 rounded-xl p-4 flex flex-col justify-end relative overflow-hidden">
                         <div class="absolute top-3 left-4 text-xs font-mono text-slate-400">功率曲線 (kW) - 嘉義布袋案場</div>
-                        <!-- 模擬圖表視覺化 -->
                         <div class="flex items-end justify-between h-28 gap-2 pt-6">
                             <div class="bg-emerald-500/20 border-t border-emerald-400 w-full rounded-t" style="height: 30%"></div>
                             <div class="bg-emerald-500/30 border-t border-emerald-400 w-full rounded-t" style="height: 50%"></div>
@@ -144,9 +140,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                         <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-screwdriver-wrench text-amber-400 mr-2"></i> 設備檢修與工單狀態</h3>
                         <button onclick="alert('開啟新增維修工單介面')" class="text-xs text-slate-400 hover:text-emerald-400 font-mono transition">＋ 建立工單</button>
                     </div>
-                    <div class="space-y-3" id="work-order-list">
-                        <!-- 動態工單列表 -->
-                    </div>
+                    <div class="space-y-3" id="work-order-list"></div>
                 </div>
             </div>
         </section>
@@ -156,7 +150,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
     <!-- Three.js CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
-        // ================= 頂部導覽切換邏輯 =================
         function switchMainTab(tab) {
             const animSec = document.getElementById('section-anim');
             const dashSec = document.getElementById('section-dashboard');
@@ -168,7 +161,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 dashSec.classList.add('hidden');
                 btnAnim.className = "px-4 py-2 bg-emerald-600 rounded-lg text-sm font-medium transition hover:bg-emerald-500 shadow-lg shadow-emerald-900/35 text-slate-950 font-bold";
                 btnDash.className = "px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm font-medium transition hover:bg-slate-700 text-slate-300";
-                // 觸發視窗大小重整以確保 3D 畫布正常顯示
                 window.dispatchEvent(new Event('resize'));
             } else {
                 animSec.classList.add('hidden');
@@ -180,14 +172,13 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             }
         }
 
-        // ================= 模組一：3D 模擬核心邏輯 =================
         const STAGES=[
           {t:"魚塭整地與土方工程",w:"2 週",tag:"Civil",
            pts:["魚塭水位調整與周邊堤岸整修","底部淤泥清理與地質結構夯實","設置進排水系統與管線預埋"],
            dims:"基地範圍 5,000 m² ｜ 養殖水深平均 1.5m"},
-          {t:"打基樁與抗風鋼構架設",w:"3 週",tag:"Structure",
-           pts:["打入抗風防震深度鋼基樁","架設高架化熱浸鍍鋅鋼構支架","確保離地淨高大於 3 公尺以利機具作業"],
-           dims:"支架高度 3.2m ｜ 結構抗風等級 17 級"},
+          {t:"抗風立體斜撐鋼構架設",w:"3 週",tag:"Structure",
+           pts:["打入抗風防震深度鋼基樁","架設高架化熱浸鍍鋅一對三立體斜撐鋼構","確保離地淨高大於 3 公尺以利機具作業"],
+           dims:"支架高度 3.2m ｜ 抗風等級 17 級（一對三斜撐）"},
           {t:"鋪設太陽能光電面板",w:"3 週",tag:"Solar",
            pts:["安裝高效率雙面發電太陽能板","依黃金比例留設適當遮蔽率（約 40%）","兼顧文蛤與虱目魚之日照與生長需求"],
            dims:"光電模組 450W × 1,120 片 ｜ 總容量 500kW"},
@@ -226,36 +217,50 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
 
         const groups=STAGES.map(()=>{const g=new THREE.Group();g.visible=false;scene.add(g);return g;});
 
-        // 階段 0
+        // 階段 0: 整地
         const d1=new THREE.Mesh(new THREE.BoxGeometry(28,0.6,20),new THREE.MeshStandardMaterial({color:0x334155,roughness:0.9}));
         d1.position.set(0,0.3,0);
         groups[0].add(d1);
 
-        // 階段 1
-        for(let x=-10;x<=10;x+=5){
-          for(let z=-6;z<=6;z+=4){
-            const p=new THREE.Mesh(new THREE.CylinderGeometry(0.15,0.15,3),new THREE.MeshStandardMaterial({color:0x64748b,metalness:0.8}));
-            p.position.set(x,1.5,z);
+        // 階段 1: 立體斜撐鋼構 (一對三結構)
+        const steelMat = new THREE.MeshStandardMaterial({color:0x94a3b8, metalness:0.8, roughness:0.2});
+        for(let x=-8; x<=8; x+=8){
+          for(let z=-4; z<=4; z+=4){
+            // 主柱
+            const p = new THREE.Mesh(new THREE.CylinderGeometry(0.12, 0.12, 3), steelMat);
+            p.position.set(x, 1.5, z);
             groups[1].add(p);
+            
+            // 一對三立體斜撐 (左右支撐臂)
+            const brace1 = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 2.2), steelMat);
+            brace1.position.set(x - 0.7, 2.2, z);
+            brace1.rotation.z = 0.55;
+            groups[1].add(brace1);
+
+            const brace2 = new THREE.Mesh(new THREE.CylinderGeometry(0.07, 0.07, 2.2), steelMat);
+            brace2.position.set(x + 0.7, 2.2, z);
+            brace2.rotation.z = -0.55;
+            groups[1].add(brace2);
           }
         }
-        const beam=new THREE.Mesh(new THREE.BoxGeometry(22,0.3,14),new THREE.MeshStandardMaterial({color:0x94a3b8,metalness:0.6}));
-        beam.position.set(0,3,0);
-        groups[1].add(beam);
+        // 頂部橫樑
+        const topBeam = new THREE.Mesh(new THREE.BoxGeometry(20, 0.25, 12), steelMat);
+        topBeam.position.set(0, 3, 0);
+        groups[1].add(topBeam);
 
-        // 階段 2
+        // 階段 2: 太陽能面板
         const panelGroup=new THREE.Group();
         for(let x=-9;x<=9;x+=3){
           for(let z=-5;z<=5;z+=3){
             const pan=new THREE.Mesh(new THREE.BoxGeometry(2.6,0.1,2.6),new THREE.MeshStandardMaterial({color:0x0f172a,metalness:0.9,roughness:0.1}));
-            pan.position.set(x,3.2,z);
+            pan.position.set(x,3.3,z);
             pan.rotation.x=0.15;
             panelGroup.add(pan);
           }
         }
         groups[2].add(panelGroup);
 
-        // 階段 3
+        // 階段 3: IoT 設備
         const aerator=new THREE.Mesh(new THREE.CylinderGeometry(0.8,0.8,0.4),new THREE.MeshStandardMaterial({color:0x10b981}));
         aerator.position.set(-4,0.3,2);
         groups[3].add(aerator);
@@ -264,7 +269,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         sensor.position.set(6,0.6,-3);
         groups[3].add(sensor);
 
-        // 階段 4
+        // 階段 4: 發電運作指示燈
         const lightIndicator=new THREE.Mesh(new THREE.SphereGeometry(0.5),new THREE.MeshBasicMaterial({color:0x38bdf8}));
         lightIndicator.position.set(0,4.5,0);
         groups[4].add(lightIndicator);
@@ -341,8 +346,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           camera.updateProjectionMatrix();
         };
 
-
-        // ================= 模組二 & 三：案場與 IoT 戰情室數據邏輯 =================
         const sitesData = [
             { id: "CY-001", name: "嘉義布袋示範案場", status: "營運中 (發電中)", progress: 100, kw: 480.2, temp: 27.1, do: 6.4, health: "正常", owner: "張工程師" },
             { id: "TN-002", name: "台南七股光電漁場", status: "營運中 (發電中)", progress: 100, kw: 620.5, temp: 28.3, do: 5.8, health: "需注意 (逆變器溫升)", owner: "林主任" },
@@ -369,7 +372,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                             </div>
                             <span class="text-xs font-mono px-2.5 py-1 rounded-full ${isOperating ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">${site.status}</span>
                         </div>
-                        
                         ${isOperating ? `
                             <div class="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-sm">
                                 <div>
@@ -398,7 +400,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                                 <div class="text-xs font-mono text-amber-400 font-bold">${site.progress}% 完成</div>
                             </div>
                         `}
-
                         <button onclick="alert('正在開啟 ${site.name} 的 IoT 即時趨勢圖與設備控制面板...')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 py-2.5 rounded-xl text-xs font-medium transition flex items-center justify-center">
                             <i class="fa-solid fa-chart-line mr-1.5 text-emerald-400"></i> 查看詳細 IoT 數據與檢修工單
                         </button>
