@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AquaSolar AI - 漁電共生 3D 建置與 IoT 智慧監控戰情室 (布袋實景修正版)</title>
+<title>AquaSolar AI - 漁電共生 3D 建置與 IoT 智慧監控戰情室 (工程圖紙對應版)</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -30,7 +30,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             </div>
             <div>
                 <h1 class="text-lg font-bold tracking-wider">AquaSolar AI 智慧監控與建置戰情室</h1>
-                <p class="text-xs text-slate-400">Agrivoltaics Symbiosis & IoT Operations Platform (布袋實景修正版)</p>
+                <p class="text-xs text-slate-400">Powerway 支架系統安裝手冊圖紙對應版 (AISC 360-05 規範)</p>
             </div>
         </div>
         <div class="flex space-x-2">
@@ -49,29 +49,29 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         <!---------------- 模組一：3D 建置動畫介面 ---------------->
         <section id="section-anim" class="col-span-12 grid grid-cols-1 lg:grid-cols-12 h-full absolute inset-0 bg-slate-950 z-10">
             <!-- 左側 3D 畫布與 HUD -->
-            <div class="col-span-12 lg:col-span-8 relative h-full bg-[#0e1629]" id="stage">
+            <div class="col-span-12 lg:col-span-8 relative h-full bg-[#0a111e]" id="stage">
                 <canvas id="c" aria-label="漁電共生案場 3D 模型" class="w-full h-full block"></canvas>
                 <div class="absolute left-4 top-4 pointer-events-none flex flex-col gap-1.5 bg-slate-900/90 backdrop-blur-sm p-4 rounded-2xl border border-slate-800 shadow-xl">
-                    <span class="text-xs font-mono tracking-widest text-emerald-400 uppercase">Field Simulation · 布袋實景修正版</span>
-                    <h2 class="text-2xl font-bold text-white">漁電共生案場結構組立 (#42)</h2>
-                    <p class="text-sm text-slate-300 max-w-lg">對應嘉義布袋案場實景：混凝土圓形基樁、高架化鋼構、V型抗風斜撐[cite: 1]。</p>
-                    <div class="flex items-center gap-2 text-xs text-slate-400 font-mono mt-1">
-                        <i class="fa-solid fa-location-dot text-emerald-500"></i> 嘉義縣布袋鎮考試里 · 2026-11-04[cite: 1]
+                    <span class="text-xs font-mono tracking-widest text-emerald-400 uppercase">Powerway PV Mounting Structure</span>
+                    <h2 class="text-xl font-bold text-white">圖紙規範 3D 結構模擬</h2>
+                    <p class="text-xs text-slate-300 max-w-sm">依據《光伏支架系統安裝手冊》繪製：PHC基樁、C型主樑、V型斜撐與走道網[cite: 3, 7]。</p>
+                    <div class="flex items-center gap-2 text-[11px] text-slate-400 font-mono mt-0.5">
+                        <i class="fa-solid fa-file-lines text-emerald-500"></i> 圖紙編號：S20230817-01TW (Ver V1.3)[cite: 4]
                     </div>
                 </div>
                 <div class="absolute right-4 top-4 font-mono text-xs text-emerald-400 border border-emerald-500/40 bg-emerald-950/60 px-3 py-1.5 rounded-lg shadow-inner">
-                    <i class="fa-solid fa-circle text-[8px] animate-pulse mr-1.5"></i> 實景模型渲染中
+                    <i class="fa-solid fa-circle text-[8px] animate-pulse mr-1.5"></i> 施工圖模型運行中
                 </div>
                 <!-- 視角切換 -->
                 <div class="absolute left-4 bottom-24 flex flex-col gap-1.5">
-                    <button type="button" data-v="actual" class="view-btn on px-3 py-1.5 bg-emerald-600 text-slate-950 font-bold text-xs rounded-md border border-slate-700 text-left transition font-mono shadow-lg">實景視角</button>
+                    <button type="button" data-v="actual" class="view-btn on px-3 py-1.5 bg-emerald-600 text-slate-950 font-bold text-xs rounded-md border border-slate-700 text-left transition font-mono shadow-lg">圖紙施工視角</button>
                     <button type="button" data-v="site" class="view-btn px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">全區鳥瞰</button>
-                    <button type="button" data-v="panel" class="view-btn px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">光電板側</button>
+                    <button type="button" data-v="top" class="view-btn px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">平面排布圖</button>
                 </div>
                 <div class="absolute left-4 bottom-4 flex flex-wrap gap-3 text-xs text-slate-300 bg-slate-900/80 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-800 pointer-events-none shadow">
-                    <span><i class="fa-solid fa-square text-stone-500 mr-1.5"></i>混凝土圓柱</span>
-                    <span><i class="fa-solid fa-square text-slate-400 mr-1.5"></i>V型抗風鋼構</span>
-                    <span><i class="fa-solid fa-square text-sky-400/70 mr-1.5"></i>施工藍色高空車</span>
+                    <span><i class="fa-solid fa-square text-stone-400 mr-1"></i>PHC樁與底盤</span>
+                    <span><i class="fa-solid fa-square text-slate-300 mr-1"></i>C型鋼主樑/斜撐</span>
+                    <span><i class="fa-solid fa-square text-emerald-400 mr-1"></i>走道鋼板網</span>
                 </div>
                 <div class="absolute right-4 bottom-4 font-mono text-[11px] text-slate-500 pointer-events-none">
                     滑鼠左鍵旋轉 · 右鍵平移 · 滾輪縮放
@@ -86,11 +86,11 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                     <button id="next" type="button" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 rounded-lg text-xs font-medium border border-slate-700 transition">下一步</button>
                     <span class="count font-mono text-xs text-slate-400 pl-2" id="count"></span>
                 </div>
-                <div class="h-1 bg-slate-800"><div id="bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 40%"></div></div>
+                <div class="h-1 bg-slate-800"><div id="bar" class="h-full bg-emerald-500 transition-all duration-300" style="width: 20%"></div></div>
                 <section class="p-5 border-b border-slate-800 space-y-3 bg-slate-900/50" id="detail"></section>
                 <ul class="steps flex-1 overflow-y-auto divide-y divide-slate-800/60 m-0 p-0 list-none" id="steps"></ul>
                 <div class="p-3 bg-slate-950 text-xs text-slate-500 border-t border-slate-800 text-center font-mono">
-                    整合綠能發電與智慧養殖生態管理 · 現場實景模型
+                    保威支架系統 · 施工圖生命週期模擬
                 </div>
             </aside>
         </section>
@@ -174,24 +174,48 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         }
 
         const STAGES=[
-          {t:"魚塭整地與土方工程",w:"2 週",tag:"Civil",
-           pts:["魚塭水位調整與周邊堤岸整修","底部淤泥清理與地質結構夯實 (呈現泥地)","設置進排水系統與管線預埋"],
-           dims:"基地範圍 5,000 m² ｜ 養殖水深平均 1.5m"},
-          {t:"混凝土圓柱基樁組立 (#42)",w:"3 週",tag:"Structure",
-           pts:["打入高強度預力混凝土圓形基樁","立起粗壯圓形混凝土立柱 (如實景圖)[cite: 1]","確保垂直度與間距"],
-           dims:"基樁直徑 40cm ｜ 柱高 3.2m ｜ 符合抗風標準"},
-          {t:"高架鋼構與V型抗風斜撐",w:"3 週",tag:"Structure",
-           pts:["安裝熱浸鍍鋅H型鋼主樑與次樑","依實景圖組裝 V 型 (A 字型) 抗風斜撐[cite: 1]","確保整體結構穩固與淨高需求"],
-           dims:"結構抗風等級 17 級 ｜ 離地淨高 > 3m"},
-          {t:"鋪設太陽能光電模組",w:"3 週",tag:"Solar",
-           pts:["安裝高效率雙面發電太陽能板","調整黃金傾斜角度以優化發電與下方日照","留設適當維修通道與遮蔽率"],
-           dims:"450W 模組 × 1,120 片 ｜ 總容量 500kW"},
-          {t:"IoT 與智慧增氧設備進駐",w:"2 週",tag:"IoT & Sensors",
-           pts:["部署水下感測器與氣象站","安裝太陽能智慧增氧機 (搭配高空車作業)[cite: 1]","完成 AI 聯防系統串接"],
-           dims:"感測節點 6 處 ｜ 變頻增氧機 4 台"},
-          {t:"正式併網發電與 AI 智慧營運",w:"持續營運",tag:"Operation",
-           pts:["太陽能系統正式併網送電運轉","啟動 AI 漁業水質異常預警與自動投餵模型","產量履歷自動合規追蹤"],
-           dims:"預估年發電量 65 萬度 ｜ 水產存活率提升 15%"}
+          {t:"PHC樁定位與打樁工程",w:"2 週",tag:"Civil",
+           pts:[
+             "使用紗線定位保證支架在一條直線 (公差±20mm)[cite: 13]",
+             "控制樁頂板孔位方向 (D300/D400 依圖面規範打入)[cite: 13]",
+             "確保最高與最低樁高差不超過 60mm[cite: 13]"
+           ],
+           dims:"軸線跨距 4500mm ｜ 樁頂標高控制"},
+          {t:"立柱安裝與底盤螺桿固定",w:"2 週",tag:"Structure",
+           pts:[
+             "安裝 W8*10 立柱與 D300/D400 底盤[cite: 7, 14]",
+             "使用美制 5 級 (7/8") 220mm 螺桿與螺母鎖固[cite: 14]",
+             "依照手冊規範執行扭矩值 (7/8" 鎖固扭矩 330-460 N*m)[cite: 14]"
+           ],
+           dims:"立柱高度 1809mm ｜ 採對稱相對安裝[cite: 7, 14]"},
+          {t:"主樑、V型斜撐與走道挑梁組立",w:"3 週",tag:"Structure",
+           pts:[
+             "安裝 C120 主樑與 C90 抗風斜撐 (L=1830/1320)[cite: 7, 14]",
+             "安裝走道挑梁並鎖固 M12/M20 六角螺栓[cite: 14, 15]",
+             "確實執行防鏽與刮花位置噴塗 80% 含鋅防腐漆[cite: 14]"
+           ],
+           dims:"主樑 C120x45 ｜ 抗風斜撐 V 型佈置[cite: 7, 8]"},
+          {t:"檩條鋪設與安全母索安裝",w:"2 週",tag:"Structure",
+           pts:[
+             "安裝 C150 檩條及檩條連接件[cite: 7, 15]",
+             "於走道上方主樑預留孔位安裝扣環與安全母索[cite: 21]",
+             "鋪設 600mm 寬走道鋼板網並鎖固專用壓塊[cite: 7, 17]"
+           ],
+           dims:"檩條規格 C150x45 ｜ 走道鋼板網 T=4.0[cite: 7, 9]"},
+          {t:"太陽能光電模組與逆變器架設",w:"3 週",tag:"Solar",
+           pts:[
+             "安裝 2278x1134x30mm 光電模組 (共 580P)[cite: 9, 19]",
+             "使用邊壓碼、中壓碼與圓頭方頸螺栓固定[cite: 19]",
+             "安裝逆變器方管橫梁與逆變器背板[cite: 7, 20]"
+           ],
+           dims:"組件規格 450W+ ｜ 搭配中壓碼夾固[cite: 7, 19]"},
+          {t:"系統併網發電與 AI 智慧維運",w:"持續營運",tag:"Operation",
+           pts:[
+             "太陽能系統正式併網送電運行",
+             "啟動 AI 漁業水質異常預警與自動增氧機聯防",
+             "定期巡檢螺栓緊固與防鏽狀況[cite: 22]"
+           ],
+           dims:"年發電量預估 65 萬度 ｜ 智慧聯防運作中"}
         ];
 
         const canvas=document.getElementById('c');
@@ -200,124 +224,105 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         renderer.shadowMap.enabled=true;
         renderer.shadowMap.type = THREE.PCFSoftShadowMap;
         const scene=new THREE.Scene();
-        scene.background=new THREE.Color('#0f172a');
-        scene.fog=new THREE.Fog('#0f172a', 80, 200);
+        scene.background=new THREE.Color('#0a111e');
+        scene.fog=new THREE.Fog('#0a111e', 60, 180);
 
         const camera=new THREE.PerspectiveCamera(45, canvas.parentElement.clientWidth / canvas.parentElement.clientHeight, 0.1, 1000);
 
-        scene.add(new THREE.AmbientLight(0xffffff, 0.8));
-        const sun=new THREE.DirectionalLight(0xffffff, 1.5);
-        sun.position.set(30, 50, 40);
+        scene.add(new THREE.AmbientLight(0xffffff, 0.9));
+        const sun=new THREE.DirectionalLight(0xffffff, 1.4);
+        sun.position.set(25, 45, 35);
         sun.castShadow=true;
         sun.shadow.mapSize.width = 2048;
         sun.shadow.mapSize.height = 2048;
-        sun.shadow.camera.near = 10;
-        sun.shadow.camera.far = 200;
-        sun.shadow.camera.left = -50;
-        sun.shadow.camera.right = 50;
-        sun.shadow.camera.top = 50;
-        sun.shadow.camera.bottom = -50;
         scene.add(sun);
 
-        const groundTexture = new THREE.TextureLoader().load('https://threejs.org/examples/textures/terrain/grasslight-big.jpg');
-        groundTexture.wrapS = groundTexture.wrapT = THREE.RepeatWrapping;
-        groundTexture.repeat.set(10, 10);
-        const groundMat = new THREE.MeshStandardMaterial({map: groundTexture, color: 0x7c6c5c, roughness: 0.9});
+        // 地面
+        const groundMat = new THREE.MeshStandardMaterial({color: 0x6e5c4a, roughness: 0.9});
         const ground=new THREE.Mesh(new THREE.PlaneGeometry(200, 200), groundMat);
         ground.rotation.x=-Math.PI/2;
         ground.position.y=-0.05;
         ground.receiveShadow=true;
         scene.add(ground);
 
-        const pond=new THREE.Mesh(new THREE.BoxGeometry(150, 0.1, 100), new THREE.MeshStandardMaterial({color:0x3a5f89, roughness:0.2, transparent:true, opacity:0.7}));
-        pond.position.set(0, -0.1, 0);
-        pond.receiveShadow = true;
-        scene.add(pond);
-
         const groups=STAGES.map(()=>{const g=new THREE.Group();g.visible=false;scene.add(g);return g;});
 
-        // 階段 0: 整地與土方工程
-        const d1=new THREE.Mesh(new THREE.BoxGeometry(160, 0.5, 110),new THREE.MeshStandardMaterial({color:0x475569,roughness:0.9}));
-        d1.position.set(0, 0.25, 0);
-        d1.receiveShadow = true;
-        groups[0].add(d1);
-
-        // 階段 1: 混凝土圓柱基樁組立
-        const concreteMat = new THREE.MeshStandardMaterial({color:0x94a3b8, roughness:0.6});
-        for(let x=-20; x<=20; x+=10){
-          for(let z=-15; z<=15; z+=10){
-            const p = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 3.2, 16), concreteMat);
-            p.position.set(x, 1.6, z);
-            p.castShadow = true;
-            p.receiveShadow = true;
-            groups[1].add(p);
-          }
+        // 階段 0: PHC樁基座
+        const pileMat = new THREE.MeshStandardMaterial({color:0x94a3b8, roughness:0.5});
+        for(let x=-15; x<=15; x+=7.5){
+            for(let z=-10; z<=10; z+=10){
+                const pile = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.25, 3.5, 16), pileMat);
+                pile.position.set(x, 1.75, z);
+                pile.castShadow = true;
+                groups[0].add(pile);
+            }
         }
 
-        // 階段 2: 高架鋼構與V型抗風斜撐
-        const steelMat = new THREE.MeshStandardMaterial({color:0xe2e8f0, metalness:0.9, roughness:0.1});
-        for(let x=-20; x<=20; x+=10){
-            for(let z=-15; z<=15; z+=10){
-                const beam = new THREE.Mesh(new THREE.BoxGeometry(0.15, 0.2, 8), steelMat);
-                beam.position.set(x, 3.2, z);
+        // 階段 1: 立柱與底盤螺桿
+        const steelMat = new THREE.MeshStandardMaterial({color:0xe2e8f0, metalness:0.8, roughness:0.2});
+        for(let x=-15; x<=15; x+=7.5){
+            for(let z=-10; z<=10; z+=10){
+                const col = new THREE.Mesh(new THREE.BoxGeometry(0.2, 3.2, 0.2), steelMat);
+                col.position.set(x, 3.4, z);
+                col.castShadow = true;
+                groups[1].add(col);
+            }
+        }
+
+        // 階段 2: 主樑與 V型抗風斜撐
+        for(let x=-15; x<=15; x+=7.5){
+            for(let z=-10; z<=10; z+=10){
+                const beam = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.25, 7), steelMat);
+                beam.position.set(x, 5.1, z);
                 beam.castShadow = true;
-                beam.receiveShadow = true;
                 groups[2].add(beam);
 
-                const braceL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.4, 8), steelMat);
-                braceL.position.set(x - 0.4, 2.2, z);
-                braceL.rotation.z = 0.6;
-                braceL.castShadow = true;
+                // V型斜撐
+                const braceL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.5, 8), steelMat);
+                braceL.position.set(x - 0.4, 4.0, z);
+                braceL.rotation.z = 0.55;
                 groups[2].add(braceL);
 
-                const braceR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.4, 8), steelMat);
-                braceR.position.set(x + 0.4, 2.2, z);
-                braceR.rotation.z = -0.6;
-                braceR.castShadow = true;
+                const braceR = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.5, 8), steelMat);
+                braceR.position.set(x + 0.4, 4.0, z);
+                braceR.rotation.z = -0.55;
                 groups[2].add(braceR);
             }
         }
 
-        // 施工高空車模型
-        const cherryPicker = new THREE.Group();
-        const base = new THREE.Mesh(new THREE.BoxGeometry(2, 1.5, 1.5), new THREE.MeshStandardMaterial({color:0x0284c7}));
-        const arm = new THREE.Mesh(new THREE.BoxGeometry(0.3, 5, 0.3), new THREE.MeshStandardMaterial({color:0xcfd8dc}));
-        arm.position.set(0, 3, 0);
-        const basket = new THREE.Mesh(new THREE.BoxGeometry(1, 0.8, 1), new THREE.MeshStandardMaterial({color:0x0284c7}));
-        basket.position.set(0, 5.5, 0);
-        cherryPicker.add(base, arm, basket);
-        cherryPicker.position.set(25, 0.75, -20);
-        cherryPicker.rotation.y = -Math.PI/4;
-        cherryPicker.castShadow = true;
-        groups[2].add(cherryPicker);
+        // 階段 3: 檩條與走道鋼板網
+        const purlinGroup = new THREE.Group();
+        for(let z=-12; z<=12; z+=2.2){
+            const purlin = new THREE.Mesh(new THREE.BoxGeometry(32, 0.15, 0.15), steelMat);
+            purlin.position.set(0, 5.3, z);
+            purlinGroup.add(purlin);
+        }
+        // 走道網
+        const catwalk = new THREE.Mesh(new THREE.BoxGeometry(32, 0.05, 0.8), new THREE.MeshStandardMaterial({color:0x10b981, roughness:0.3}));
+        catwalk.position.set(0, 5.25, 0);
+        purlinGroup.add(catwalk);
+        groups[3].add(purlinGroup);
 
-        // 階段 3: 鋪設太陽能光電面板
+        // 階段 4: 光電模組與逆變器
         const panelGroup=new THREE.Group();
-        for(let x=-22; x<=22; x+=4){
-          for(let z=-18; z<=18; z+=5){
-            const pan=new THREE.Mesh(new THREE.BoxGeometry(3.4, 0.08, 2.2),new THREE.MeshStandardMaterial({color:0x0c0f1a, metalness:0.9, roughness:0.1}));
-            pan.position.set(x, 3.5, z);
-            pan.rotation.x=0.25;
+        for(let x=-14; x<=14; x+=3.4){
+          for(let z=-11; z<=11; z+=2.4){
+            const pan=new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.08, 2.2),new THREE.MeshStandardMaterial({color:0x090d16, metalness:0.95, roughness:0.1}));
+            pan.position.set(x, 5.5, z);
+            pan.rotation.x=0.22;
             pan.castShadow = true;
             panelGroup.add(pan);
           }
         }
-        groups[3].add(panelGroup);
+        // 逆變器箱體
+        const inverter = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.2, 0.4), new THREE.MeshStandardMaterial({color:0xf59e0b}));
+        inverter.position.set(0, 4.5, -2);
+        panelGroup.add(inverter);
+        groups[4].add(panelGroup);
 
-        // 階段 4: IoT 水質感測設備與增氧機
-        const aerator=new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 0.6, 16),new THREE.MeshStandardMaterial({color:0x10b981}));
-        aerator.position.set(-15, -0.05, 5);
-        aerator.castShadow = true;
-        groups[4].add(aerator);
-
-        const sensor=new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.8, 0.6),new THREE.MeshStandardMaterial({color:0xf59e0b}));
-        sensor.position.set(18, 0.8, -10);
-        sensor.castShadow = true;
-        groups[4].add(sensor);
-
-        // 階段 5: 正式併網發電指示
+        // 階段 5: 併網發電指示燈
         const lightIndicator=new THREE.Mesh(new THREE.SphereGeometry(0.8),new THREE.MeshBasicMaterial({color:0x38bdf8}));
-        lightIndicator.position.set(0, 5, 0);
+        lightIndicator.position.set(0, 7.5, 0);
         groups[5].add(lightIndicator);
 
         let cur=-1,playing=false,timer=null,curCamMode='actual';
@@ -351,9 +356,9 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         };
 
         const VIEWS={
-          actual:{pos:[12, 2.2, 14], target:[0, 2.5, 0]},
-          site:{pos:[0, 35, 45], target:[0, 1, 0]},
-          panel:{pos:[25, 12, 0], target:[0, 3, 0]}
+          actual:{pos:[6, 2.5, 10], target:[0, 4.5, 0]},
+          site:{pos:[0, 35, 42], target:[0, 2, 0]},
+          top:{pos:[0, 40, 0.1], target:[0, 0, 0]}
         };
         let camPos=new THREE.Vector3(...VIEWS.actual.pos), camTarget=new THREE.Vector3(...VIEWS.actual.target);
         document.querySelectorAll('.view-btn').forEach(b=>b.onclick=function(){
@@ -380,7 +385,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           camera.lookAt(camTarget);
           renderer.render(scene, camera);
         }
-        go(2); // 預設停在鋼構組立階段以檢視實景
+        go(2); // 預設停在主樑與斜撐組立階段
         animate();
         window.onresize=()=>{
           const container = canvas.parentElement;
