@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>AquaSolar AI - 漁電共生 3D 建置與 IoT 智慧監控 </title>
+<title>AquaSolar AI - AI 智慧監控與建置</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -92,15 +92,15 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             </aside>
         </section>
 
-        <!---------------- 模組二 & 三：多案場追蹤與 IoT 戰情室 ---------------->
+        <!---------------- 模組二 & 三：多案場追蹤與 IoT 監控 ---------------->
         <section id="section-dashboard" class="col-span-12 hidden grid grid-cols-1 lg:grid-cols-12 h-full absolute inset-0 bg-slate-950 z-20 overflow-y-auto p-6 space-y-6">
             <div class="col-span-12 flex justify-between items-center bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg">
                 <div>
-                    <h2 class="text-xl font-bold text-emerald-400">營運中案場與 IoT 即時戰情室</h2>
+                    <h2 class="text-xl font-bold text-emerald-400">營運中案場與 IoT 即時監控</h2>
                     <p class="text-slate-400 text-sm mt-0.5">即時追蹤各案場發電效能、水質溶氧狀況與設備檢修工單</p>
                 </div>
                 <div class="flex gap-3">
-                    <button onclick="alert('模擬新增智慧案場資料表單')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-sm font-medium transition flex items-center shadow-lg shadow-emerald-900/30">
+                    <button onclick="openModal('siteModal')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-sm font-medium transition flex items-center shadow-lg shadow-emerald-900/30">
                         <i class="fa-solid fa-plus mr-1.5"></i> 新增案場
                     </button>
                 </div>
@@ -109,7 +109,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             <!-- 案場卡片清單 -->
             <div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6" id="site-grid"></div>
 
-            <!-- 底部 IoT 歷史趨勢與工單戰情 -->
+            <!-- 底部 IoT 歷史趨勢與工單清單 -->
             <div class="col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6 pb-12">
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-lg">
                     <div class="flex justify-between items-center">
@@ -136,7 +136,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-lg">
                     <div class="flex justify-between items-center">
                         <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-screwdriver-wrench text-amber-400 mr-2"></i> 設備檢修與工單狀態</h3>
-                        <button onclick="alert('開啟新增維修工單介面')" class="text-xs text-slate-400 hover:text-emerald-400 font-mono transition">＋ 建立工單</button>
+                        <button onclick="openModal('woModal')" class="text-xs text-slate-400 hover:text-emerald-400 font-mono transition">＋ 建立工單</button>
                     </div>
                     <div class="space-y-3" id="work-order-list"></div>
                 </div>
@@ -145,6 +145,122 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
 
     </main>
 
+    <!-- ================= 互動彈跳視窗：新增案場 ================= -->
+    <div id="siteModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-emerald-400"><i class="fa-solid fa-solar-panel mr-2"></i> 新增智慧案場</h3>
+                <button onclick="closeModal('siteModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="siteForm" onsubmit="handleNewSite(event)" class="space-y-4 text-sm">
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">案場編號</label>
+                    <input type="text" id="newSiteId" required placeholder="例: CY-004" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">案場名稱</label>
+                    <input type="text" id="newSiteName" required placeholder="例: 嘉義東石漁電共生案場" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">營運狀態</label>
+                        <select id="newSiteStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                            <option value="營運中 (發電中)">營運中 (發電中)</option>
+                            <option value="建置中 (施工階段)">建置中 (施工階段)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">負責工程師</label>
+                        <input type="text" id="newSiteOwner" required placeholder="例: 張工程師" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" onclick="closeModal('siteModal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-medium transition">取消</button>
+                    <button type="submit" class="px-5 py-2 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-emerald-900/30">確認新增</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= 互動彈跳視窗：建立工單 ================= -->
+    <div id="woModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center">
+                <h3 class="text-lg font-bold text-amber-400"><i class="fa-solid fa-screwdriver-wrench mr-2"></i> 建立設備檢修工單</h3>
+                <button onclick="closeModal('woModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <form id="woForm" onsubmit="handleNewWO(event)" class="space-y-4 text-sm">
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">選擇關聯案場</label>
+                    <select id="woSiteSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+                        <!-- 動態帶入案場 -->
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">異常項目與維修內容</label>
+                    <input type="text" id="woItem" required placeholder="例: #2 增氧機軸承異音與電流過載" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">初始狀態</label>
+                    <select id="woStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono text-xs">
+                        <option value="待派工">待派工</option>
+                        <option value="處理中">處理中</option>
+                        <option value="已完成">已完成</option>
+                    </select>
+                </div>
+                <div class="flex justify-end gap-3 pt-3">
+                    <button type="button" onclick="closeModal('woModal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-medium transition">取消</button>
+                    <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-amber-900/30">發布工單</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= 互動彈跳視窗：案場 IoT 詳細面板與設備控制 ================= -->
+    <div id="detailModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 space-y-5 shadow-2xl">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <div>
+                    <span id="detailSiteId" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-950 border border-emerald-800/50 px-2 py-0.5 rounded-full"></span>
+                    <h3 id="detailSiteName" class="text-xl font-bold mt-1 text-white"></h3>
+                </div>
+                <button onclick="closeModal('detailModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="space-y-4 text-xs font-mono">
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">即時發電功率</div>
+                        <div id="detailKw" class="text-base font-bold text-emerald-400 mt-1"></div>
+                    </div>
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">水質溶氧量</div>
+                        <div id="detailDo" class="text-base font-bold text-sky-400 mt-1"></div>
+                    </div>
+                    <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800">
+                        <div class="text-slate-400 text-[10px]">水溫記錄</div>
+                        <div id="detailTemp" class="text-base font-bold text-amber-400 mt-1"></div>
+                    </div>
+                </div>
+                <div class="bg-slate-950/80 p-4 rounded-xl border border-slate-800 space-y-3 font-sans">
+                    <div class="font-bold text-sm text-slate-200">智慧增氧機遠端控制</div>
+                    <div class="flex items-center justify-between text-xs">
+                        <span class="text-slate-400">變頻增氧機群組 A (4台)</span>
+                        <button onclick="alert('已發送遠端啟動指令：增氧機運轉速率調至 80%')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold rounded-lg transition">遠端啟動</button>
+                    </div>
+                    <div class="flex items-center justify-between text-xs border-t border-slate-800/80 pt-2">
+                        <span class="text-slate-400">AI 水質自動預警防護</span>
+                        <span class="text-emerald-400 font-mono font-bold"><i class="fa-solid fa-shield-halved mr-1"></i> 運行中</span>
+                    </div>
+                </div>
+            </div>
+            <div class="flex justify-end pt-2">
+                <button onclick="closeModal('detailModal')" class="px-5 py-2 bg-slate-800 hover:bg-slate-700 text-white rounded-xl text-xs font-medium transition">關閉面板</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Three.js CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script>
         function switchMainTab(tab) {
             const animSec = document.getElementById('section-anim');
@@ -165,9 +281,156 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 btnAnim.className = "px-4 py-2 bg-slate-800 border border-slate-700 rounded-lg text-sm font-medium transition hover:bg-slate-700 text-slate-300";
                 renderDashboardSites();
                 renderWorkOrders();
+                updateWoSiteSelect();
             }
         }
 
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.remove('hidden');
+            if(modalId === 'woModal') updateWoSiteSelect();
+        }
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        let sitesData = [
+            { id: "CY-001", name: "嘉義布袋示範案場", status: "營運中 (發電中)", progress: 100, kw: 480.2, temp: 27.1, do: 6.4, health: "正常", owner: "張工程師" },
+            { id: "TN-002", name: "台南七股光電漁場", status: "營運中 (發電中)", progress: 100, kw: 620.5, temp: 28.3, do: 5.8, health: "需注意 (逆變器溫升)", owner: "林主任" },
+            { id: "YL-003", name: "雲林口湖養殖專區", status: "建置中 (施工階段)", progress: 75, kw: 0, temp: 26.5, do: 6.9, health: "施工中", owner: "王工" }
+        ];
+
+        let workOrders = [
+            { id: "WO-2026-01", site: "台南七股光電漁場", item: "#3 逆變器散熱風扇轉速異常", status: "處理中", date: "2026-11-04" },
+            { id: "WO-2026-02", site: "嘉義布袋示範案場", item: "B 區水下溶氧感測器校正", status: "已完成", date: "2026-11-03" },
+            { id: "WO-2026-03", site: "雲林口湖養殖專區", item: "光電板表面鳥糞清洗與維護", status: "待派工", date: "2026-11-04" }
+        ];
+
+        function handleNewSite(e) {
+            e.preventDefault();
+            const id = document.getElementById('newSiteId').value.trim();
+            const name = document.getElementById('newSiteName').value.trim();
+            const status = document.getElementById('newSiteStatus').value;
+            const owner = document.getElementById('newSiteOwner').value.trim();
+            const isOp = status.includes("營運中");
+
+            sitesData.unshift({
+                id, name, status,
+                progress: isOp ? 100 : 60,
+                kw: isOp ? 500.0 : 0,
+                temp: 27.0, do: 6.5,
+                health: isOp ? "正常" : "施工中",
+                owner
+            });
+
+            renderDashboardSites();
+            closeModal('siteModal');
+            document.getElementById('siteForm').reset();
+        }
+
+        function handleNewWO(e) {
+            e.preventDefault();
+            const site = document.getElementById('woSiteSelect').value;
+            const item = document.getElementById('woItem').value.trim();
+            const status = document.getElementById('woStatus').value;
+            const today = new Date().toISOString().split('T')[0];
+
+            workOrders.unshift({
+                id: "WO-" + Math.floor(1000 + Math.random() * 9000),
+                site, item, status, date: today
+            });
+
+            renderWorkOrders();
+            closeModal('woModal');
+            document.getElementById('woForm').reset();
+        }
+
+        function updateWoSiteSelect() {
+            const select = document.getElementById('woSiteSelect');
+            select.innerHTML = "";
+            sitesData.forEach(s => {
+                select.innerHTML += `<option value="${s.name}">${s.name} (${s.id})</option>`;
+            });
+        }
+
+        function openDetailModal(siteId) {
+            const site = sitesData.find(s => s.id === siteId);
+            if(!site) return;
+            document.getElementById('detailSiteId').textContent = site.id;
+            document.getElementById('detailSiteName').textContent = site.name;
+            document.getElementById('detailKw').textContent = site.kw + " kW";
+            document.getElementById('detailDo').textContent = site.do + " mg/L";
+            document.getElementById('detailTemp').textContent = site.temp + " °C";
+            openModal('detailModal');
+        }
+
+        function renderDashboardSites() {
+            const grid = document.getElementById('site-grid');
+            grid.innerHTML = "";
+            sitesData.forEach(site => {
+                const isOperating = site.progress === 100;
+                grid.innerHTML += `
+                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs font-mono font-bold text-emerald-400 bg-emerald-950 border border-emerald-800/50 px-2.5 py-1 rounded-full">${site.id}</span>
+                                <h3 class="text-lg font-bold mt-2">${site.name}</h3>
+                            </div>
+                            <span class="text-xs font-mono px-2.5 py-1 rounded-full ${isOperating ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">${site.status}</span>
+                        </div>
+                        ${isOperating ? `
+                            <div class="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-sm">
+                                <div>
+                                    <div class="text-slate-400 text-xs">即時發電功率</div>
+                                    <div class="text-lg font-mono font-bold text-emerald-400">${site.kw} kW</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-400 text-xs">水質溶氧量</div>
+                                    <div class="text-lg font-mono font-bold text-sky-400">${site.do} mg/L</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-400 text-xs">水溫</div>
+                                    <div class="font-mono font-medium">${site.temp} °C</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-400 text-xs">設備狀態</div>
+                                    <div class="font-medium text-emerald-400 text-xs mt-1">${site.health}</div>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-center space-y-2">
+                                <div class="text-xs text-slate-400">目前建置進度</div>
+                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
+                                    <div class="bg-amber-500 h-full" style="width: ${site.progress}%"></div>
+                                </div>
+                                <div class="text-xs font-mono text-amber-400 font-bold">${site.progress}% 完成</div>
+                            </div>
+                        `}
+                        <button onclick="openDetailModal('${site.id}')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 py-2.5 rounded-xl text-xs font-medium transition flex items-center justify-center">
+                            <i class="fa-solid fa-chart-line mr-1.5 text-emerald-400"></i> 查看詳細 IoT 數據與設備控制
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function renderWorkOrders() {
+            const list = document.getElementById('work-order-list');
+            list.innerHTML = "";
+            workOrders.forEach(wo => {
+                const statusColor = wo.status === '已完成' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : wo.status === '處理中' ? 'bg-sky-950 text-sky-300 border-sky-800' : 'bg-amber-950 text-amber-300 border-amber-800';
+                list.innerHTML += `
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3.5 rounded-xl flex justify-between items-center text-xs">
+                        <div class="space-y-1">
+                            <div class="font-bold text-slate-200">${wo.item}</div>
+                            <div class="text-slate-400 font-mono">${wo.site} · ${wo.date}</div>
+                        </div>
+                        <span class="px-2.5 py-1 rounded-full font-mono border ${statusColor}">${wo.status}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // ================= 3D 模型與生命週期動畫核心 =================
         const STAGES=[
           {t:"PHC樁定位與打樁工程",w:"2 週",tag:"Civil",
            pts:[
@@ -232,7 +495,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         sun.shadow.mapSize.height = 2048;
         scene.add(sun);
 
-        // 地面
         const groundMat = new THREE.MeshStandardMaterial({color: 0x6e5c4a, roughness: 0.9});
         const ground=new THREE.Mesh(new THREE.PlaneGeometry(200, 200), groundMat);
         ground.rotation.x=-Math.PI/2;
@@ -253,7 +515,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             }
         }
 
-        // 階段 1: 立柱與底盤螺桿
+        // 階段 1: 立柱
         const steelMat = new THREE.MeshStandardMaterial({color:0xe2e8f0, metalness:0.8, roughness:0.2});
         for(let x=-15; x<=15; x+=7.5){
             for(let z=-10; z<=10; z+=10){
@@ -264,7 +526,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             }
         }
 
-        // 階段 2: 主樑與 V型抗風斜撐
+        // 階段 2: 主樑與斜撐
         for(let x=-15; x<=15; x+=7.5){
             for(let z=-10; z<=10; z+=10){
                 const beam = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.25, 7), steelMat);
@@ -272,7 +534,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 beam.castShadow = true;
                 groups[2].add(beam);
 
-                // V型斜撐
                 const braceL = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 2.5, 8), steelMat);
                 braceL.position.set(x - 0.4, 4.0, z);
                 braceL.rotation.z = 0.55;
@@ -285,20 +546,19 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             }
         }
 
-        // 階段 3: 檩條與走道鋼板網
+        // 階段 3: 檩條與走道網
         const purlinGroup = new THREE.Group();
         for(let z=-12; z<=12; z+=2.2){
             const purlin = new THREE.Mesh(new THREE.BoxGeometry(32, 0.15, 0.15), steelMat);
             purlin.position.set(0, 5.3, z);
             purlinGroup.add(purlin);
         }
-        // 走道網
         const catwalk = new THREE.Mesh(new THREE.BoxGeometry(32, 0.05, 0.8), new THREE.MeshStandardMaterial({color:0x10b981, roughness:0.3}));
         catwalk.position.set(0, 5.25, 0);
         purlinGroup.add(catwalk);
         groups[3].add(purlinGroup);
 
-        // 階段 4: 光電模組與逆變器
+        // 階段 4: 光電板與逆變器
         const panelGroup=new THREE.Group();
         for(let x=-14; x<=14; x+=3.4){
           for(let z=-11; z<=11; z+=2.4){
@@ -309,13 +569,12 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             panelGroup.add(pan);
           }
         }
-        // 逆變器箱體
         const inverter = new THREE.Mesh(new THREE.BoxGeometry(0.6, 1.2, 0.4), new THREE.MeshStandardMaterial({color:0xf59e0b}));
         inverter.position.set(0, 4.5, -2);
         panelGroup.add(inverter);
         groups[4].add(panelGroup);
 
-        // 階段 5: 併網發電指示燈
+        // 階段 5: 發電指示燈
         const lightIndicator=new THREE.Mesh(new THREE.SphereGeometry(0.8),new THREE.MeshBasicMaterial({color:0x38bdf8}));
         lightIndicator.position.set(0, 7.5, 0);
         groups[5].add(lightIndicator);
@@ -380,7 +639,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           camera.lookAt(camTarget);
           renderer.render(scene, camera);
         }
-        go(2); // 預設停在主樑與斜撐組立階段
+        go(2);
         animate();
         window.onresize=()=>{
           const container = canvas.parentElement;
@@ -392,84 +651,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           camera.updateProjectionMatrix();
         };
 
-        const sitesData = [
-            { id: "CY-001", name: "嘉義布袋示範案場", status: "營運中 (發電中)", progress: 100, kw: 480.2, temp: 27.1, do: 6.4, health: "正常", owner: "張工程師" },
-            { id: "TN-002", name: "台南七股光電漁場", status: "營運中 (發電中)", progress: 100, kw: 620.5, temp: 28.3, do: 5.8, health: "需注意 (逆變器溫升)", owner: "林主任" },
-            { id: "YL-003", name: "雲林口湖養殖專區", status: "建置中 (鋪設模板)", progress: 75, kw: 0, temp: 26.5, do: 6.9, health: "施工中", owner: "王工" }
-        ];
-
-        const workOrders = [
-            { id: "WO-2026-01", site: "台南七股光電漁場", item: "#3 逆變器散熱風扇轉速異常", status: "處理中", date: "2026-11-04" },
-            { id: "WO-2026-02", site: "嘉義布袋示範案場", item: "B 區水下溶氧感測器校正", status: "已完成", date: "2026-11-03" },
-            { id: "WO-2026-03", site: "雲林口湖養殖專區", item: "光電板表面鳥糞清洗與維護", status: "待派工", date: "2026-11-04" }
-        ];
-
-        function renderDashboardSites() {
-            const grid = document.getElementById('site-grid');
-            grid.innerHTML = "";
-            sitesData.forEach(site => {
-                const isOperating = site.progress === 100;
-                grid.innerHTML += `
-                    <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-xl">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-xs font-mono font-bold text-emerald-400 bg-emerald-950 border border-emerald-800/50 px-2.5 py-1 rounded-full">${site.id}</span>
-                                <h3 class="text-lg font-bold mt-2">${site.name}</h3>
-                            </div>
-                            <span class="text-xs font-mono px-2.5 py-1 rounded-full ${isOperating ? 'bg-emerald-950 text-emerald-300 border border-emerald-800' : 'bg-amber-950 text-amber-300 border border-amber-800'}">${site.status}</span>
-                        </div>
-                        ${isOperating ? `
-                            <div class="grid grid-cols-2 gap-3 bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-sm">
-                                <div>
-                                    <div class="text-slate-400 text-xs">即時發電功率</div>
-                                    <div class="text-lg font-mono font-bold text-emerald-400">${site.kw} kW</div>
-                                </div>
-                                <div>
-                                    <div class="text-slate-400 text-xs">水質溶氧量</div>
-                                    <div class="text-lg font-mono font-bold text-sky-400">${site.do} mg/L</div>
-                                </div>
-                                <div>
-                                    <div class="text-slate-400 text-xs">水溫</div>
-                                    <div class="font-mono font-medium">${site.temp} °C</div>
-                                </div>
-                                <div>
-                                    <div class="text-slate-400 text-xs">設備狀態</div>
-                                    <div class="font-medium text-emerald-400 text-xs mt-1">${site.health}</div>
-                                </div>
-                            </div>
-                        ` : `
-                            <div class="bg-slate-950/60 p-4 rounded-xl border border-slate-800 text-center space-y-2">
-                                <div class="text-xs text-slate-400">目前建置進度</div>
-                                <div class="w-full bg-slate-800 h-2 rounded-full overflow-hidden">
-                                    <div class="bg-amber-500 h-full" style="width: ${site.progress}%"></div>
-                                </div>
-                                <div class="text-xs font-mono text-amber-400 font-bold">${site.progress}% 完成</div>
-                            </div>
-                        `}
-                        <button onclick="alert('正在開啟 ${site.name} 的 IoT 即時趨勢圖與設備控制面板...')" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-700 py-2.5 rounded-xl text-xs font-medium transition flex items-center justify-center">
-                            <i class="fa-solid fa-chart-line mr-1.5 text-emerald-400"></i> 查看詳細 IoT 數據與檢修工單
-                        </button>
-                    </div>
-                `;
-            });
-        }
-
-        function renderWorkOrders() {
-            const list = document.getElementById('work-order-list');
-            list.innerHTML = "";
-            workOrders.forEach(wo => {
-                const statusColor = wo.status === '已完成' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : wo.status === '處理中' ? 'bg-sky-950 text-sky-300 border-sky-800' : 'bg-amber-950 text-amber-300 border-amber-800';
-                list.innerHTML += `
-                    <div class="bg-slate-950/60 border border-slate-800/80 p-3.5 rounded-xl flex justify-between items-center text-xs">
-                        <div class="space-y-1">
-                            <div class="font-bold text-slate-200">${wo.item}</div>
-                            <div class="text-slate-400 font-mono">${wo.site} · ${wo.date}</div>
-                        </div>
-                        <span class="px-2.5 py-1 rounded-full font-mono border ${statusColor}">${wo.status}</span>
-                    </div>
-                `;
-            });
-        }
+        renderDashboardSites();
+        renderWorkOrders();
     </script>
 </body>
 </html>
