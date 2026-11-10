@@ -66,7 +66,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                     <button type="button" data-v="top" class="view-btn px-3 py-1.5 bg-slate-900/90 hover:bg-slate-800 text-xs rounded-md border border-slate-700 text-left transition font-mono">正上視角</button>
                 </div>
                 <div class="absolute left-4 bottom-4 flex flex-wrap gap-3 text-xs text-slate-300 bg-slate-900/80 backdrop-blur-md px-3 py-2 rounded-lg border border-slate-800 pointer-events-none shadow">
-                    <span><i class="fa-solid fa-square text-stone-400 mr-1"></i>PHC基樁</span>
+                    <span><i class="fa-solid fa-square text-stone-400 mr-1"></i>基樁與底盤</span>
                     <span><i class="fa-solid fa-square text-slate-300 mr-1"></i>C型鋼主樑</span>
                     <span><i class="fa-solid fa-square text-emerald-400 mr-1"></i>走道鋼板網</span>
                 </div>
@@ -97,7 +97,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             <div class="col-span-12 flex justify-between items-center bg-slate-900 p-5 rounded-2xl border border-slate-800 shadow-lg">
                 <div>
                     <h2 class="text-xl font-bold text-emerald-400">營運中案場與 IoT 即時監控</h2>
-                    <p class="text-slate-400 text-sm mt-0.5">即時追蹤各案場發電效能、水質溶氧狀況與設備檢修工單</p>
+                    <p class="text-slate-400 text-sm mt-0.5">即時追蹤各案場發電效能、水質溶氧狀況與施工派工單</p>
                 </div>
                 <div class="flex gap-3">
                     <button onclick="openModal('siteModal')" class="bg-emerald-600 hover:bg-emerald-500 px-4 py-2 rounded-xl text-sm font-medium transition flex items-center shadow-lg shadow-emerald-900/30">
@@ -109,7 +109,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             <!-- 案場卡片清單 -->
             <div class="col-span-12 grid grid-cols-1 md:grid-cols-3 gap-6" id="site-grid"></div>
 
-            <!-- 底部 IoT 歷史趨勢與工單清單 -->
+            <!-- 底部 IoT 歷史趨勢與派工單清單 -->
             <div class="col-span-12 grid grid-cols-1 lg:grid-cols-2 gap-6 pb-12">
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-lg">
                     <div class="flex justify-between items-center">
@@ -135,8 +135,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
 
                 <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 space-y-4 shadow-lg">
                     <div class="flex justify-between items-center">
-                        <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-screwdriver-wrench text-amber-400 mr-2"></i> 設備檢修與工單狀態</h3>
-                        <button onclick="openModal('woModal')" class="text-xs text-slate-400 hover:text-emerald-400 font-mono transition">＋ 建立工單</button>
+                        <h3 class="font-bold text-base flex items-center"><i class="fa-solid fa-file-lines text-amber-400 mr-2"></i> 施工派工單與現場回報</h3>
+                        <button onclick="openModal('woModal')" class="text-xs text-slate-400 hover:text-emerald-400 font-mono transition">＋ 上傳派工單</button>
                     </div>
                     <div class="space-y-3" id="work-order-list"></div>
                 </div>
@@ -161,18 +161,27 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                     <label class="block text-slate-400 text-xs mb-1">案場名稱</label>
                     <input type="text" id="newSiteName" required placeholder="例: 嘉義東石漁電共生案場" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
                 </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-slate-400 text-xs mb-1">營運狀態</label>
-                        <select id="newSiteStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
-                            <option value="營運中 (發電中)">營運中 (發電中)</option>
-                            <option value="建置中 (施工階段)">建置中 (施工階段)</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-slate-400 text-xs mb-1">負責工程師</label>
-                        <input type="text" id="newSiteOwner" required placeholder="例: 張工程師" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
-                    </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">營運狀態</label>
+                    <select id="newSiteStatus" onchange="toggleConstructionPhase(this.value)" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                        <option value="營運中 (發電中)">營運中 (發電中)</option>
+                        <option value="施工中">施工中 (建置階段)</option>
+                    </select>
+                </div>
+                <!-- 施工階段細分選項 -->
+                <div id="constructionPhaseContainer" class="hidden">
+                    <label class="block text-emerald-400 text-xs mb-1">目前施工階段</label>
+                    <select id="newSitePhase" class="w-full bg-slate-950 border border-emerald-800/80 rounded-xl px-3.5 py-2.5 text-emerald-300 focus:outline-none focus:border-emerald-500 text-xs font-mono">
+                        <option value="基樁定位與打樁工程">第 1 階段：基樁定位與打樁工程</option>
+                        <option value="立柱安裝與底盤螺桿固定">第 2 階段：立柱安裝與底盤螺桿固定</option>
+                        <option value="主樑、V型斜撐與走道挑梁組立">第 3 階段：主樑、V型斜撐與走道挑梁組立</option>
+                        <option value="檩條鋪設與安全母索安裝">第 4 階段：檩條鋪設與安全母索安裝</option>
+                        <option value="太陽能光電模組與逆變器架設">第 5 階段：太陽能光電模組與逆變器架設</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">負責工程師</label>
+                    <input type="text" id="newSiteOwner" required placeholder="例: 張工程師" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
                 </div>
                 <div class="flex justify-end gap-3 pt-3">
                     <button type="button" onclick="closeModal('siteModal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-medium transition">取消</button>
@@ -182,35 +191,65 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         </div>
     </div>
 
-    <!-- ================= 互動彈跳視窗：建立工單 ================= -->
+    <!-- ================= 互動彈跳視窗：上傳施工派工單 (含廠商、場域區段) ================= -->
     <div id="woModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-5 shadow-2xl">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 space-y-5 shadow-2xl overflow-y-auto max-h-[90vh]">
             <div class="flex justify-between items-center">
-                <h3 class="text-lg font-bold text-amber-400"><i class="fa-solid fa-screwdriver-wrench mr-2"></i> 建立設備檢修工單</h3>
+                <h3 class="text-lg font-bold text-amber-400"><i class="fa-solid fa-file-lines mr-2"></i> 上傳施工派工單與現場回報</h3>
                 <button onclick="closeModal('woModal')" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark text-lg"></i></button>
             </div>
             <form id="woForm" onsubmit="handleNewWO(event)" class="space-y-4 text-sm">
                 <div>
                     <label class="block text-slate-400 text-xs mb-1">選擇關聯案場</label>
-                    <select id="woSiteSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    <select id="woSiteSelect" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono text-xs">
                         <!-- 動態帶入案場 -->
                     </select>
                 </div>
-                <div>
-                    <label class="block text-slate-400 text-xs mb-1">異常項目與維修內容</label>
-                    <input type="text" id="woItem" required placeholder="例: #2 增氧機軸承異音與電流過載" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">承攬廠商名稱</label>
+                        <input type="text" id="woVendor" required placeholder="例: 綠能工程股份有限公司" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">場域 / 施工區段</label>
+                        <input type="text" id="woZone" required placeholder="例: #1 ~ #20 區段" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">出工人數</label>
+                        <input type="number" id="woWorkers" min="1" value="8" required class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">現場負責人</label>
+                        <input type="text" id="woLeader" required placeholder="例: 張工程師" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                    </div>
                 </div>
                 <div>
-                    <label class="block text-slate-400 text-xs mb-1">初始狀態</label>
+                    <label class="block text-slate-400 text-xs mb-1">今日施工工項說明</label>
+                    <input type="text" id="woItem" required placeholder="例: #1~#20 基樁定位與打樁工程" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                </div>
+                <div class="grid grid-cols-2 gap-3 pt-1">
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">當日施工前照片上傳</label>
+                        <input type="file" id="woBeforePhoto" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-emerald-400 hover:file:bg-slate-700">
+                    </div>
+                    <div>
+                        <label class="block text-slate-400 text-xs mb-1">施工後照片上傳</label>
+                        <input type="file" id="woAfterPhoto" accept="image/*" class="w-full text-xs text-slate-400 file:mr-2 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-800 file:text-sky-400 hover:file:bg-slate-700">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-slate-400 text-xs mb-1">派工單狀態</label>
                     <select id="woStatus" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500 font-mono text-xs">
-                        <option value="待派工">待派工</option>
-                        <option value="處理中">處理中</option>
-                        <option value="已完成">已完成</option>
+                        <option value="施工中">施工中</option>
+                        <option value="已完工待驗收">已完工待驗收</option>
+                        <option value="已審核歸檔">已審核歸檔</option>
                     </select>
                 </div>
                 <div class="flex justify-end gap-3 pt-3">
                     <button type="button" onclick="closeModal('woModal')" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-xs font-medium transition">取消</button>
-                    <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-amber-900/30">發布工單</button>
+                    <button type="submit" class="px-5 py-2 bg-amber-600 hover:bg-amber-500 text-slate-950 font-bold rounded-xl text-xs transition shadow-lg shadow-amber-900/30">上傳派工單</button>
                 </div>
             </form>
         </div>
@@ -293,29 +332,40 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             document.getElementById(modalId).classList.add('hidden');
         }
 
+        function toggleConstructionPhase(val) {
+            const container = document.getElementById('constructionPhaseContainer');
+            if(val === '施工中') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
         let sitesData = [
             { id: "CY-001", name: "嘉義布袋示範案場", status: "營運中 (發電中)", progress: 100, kw: 480.2, temp: 27.1, do: 6.4, health: "正常", owner: "張工程師" },
             { id: "TN-002", name: "台南七股光電漁場", status: "營運中 (發電中)", progress: 100, kw: 620.5, temp: 28.3, do: 5.8, health: "需注意 (逆變器溫升)", owner: "林主任" },
-            { id: "YL-003", name: "雲林口湖養殖專區", status: "建置中 (施工階段)", progress: 75, kw: 0, temp: 26.5, do: 6.9, health: "施工中", owner: "王工" }
+            { id: "YL-003", name: "雲林口湖養殖專區", status: "施工中：主樑與V型斜撐組立", progress: 65, kw: 0, temp: 26.5, do: 6.9, health: "施工中", owner: "王工" }
         ];
 
         let workOrders = [
-            { id: "WO-2026-01", site: "台南七股光電漁場", item: "#3 逆變器散熱風扇轉速異常", status: "處理中", date: "2026-11-04" },
-            { id: "WO-2026-02", site: "嘉義布袋示範案場", item: "B 區水下溶氧感測器校正", status: "已完成", date: "2026-11-03" },
-            { id: "WO-2026-03", site: "雲林口湖養殖專區", item: "光電板表面鳥糞清洗與維護", status: "待派工", date: "2026-11-04" }
+            { id: "WO-2026-01", site: "雲林口湖養殖專區", vendor: "立誠營造工程", zone: "#1 ~ #20", item: "#42 鋼構組立與 V 型抗風斜撐鎖固", workers: 12, leader: "王工", status: "施工中", date: "2026-11-04", beforeImg: "施工前_地質夯實.jpg", afterImg: "施工後_鋼構立柱.jpg" },
+            { id: "WO-2026-02", site: "嘉義布袋示範案場", vendor: "綠能機電實業", zone: "#21 ~ #40", item: "B 區水下溶氧感測器校正與維護", workers: 4, leader: "張工程師", status: "已審核歸檔", date: "2026-11-03", beforeImg: "維護前_感測器附著物.jpg", afterImg: "維護後_校正完成.jpg" }
         ];
 
         function handleNewSite(e) {
             e.preventDefault();
             const id = document.getElementById('newSiteId').value.trim();
             const name = document.getElementById('newSiteName').value.trim();
-            const status = document.getElementById('newSiteStatus').value;
+            const statusType = document.getElementById('newSiteStatus').value;
+            const phase = document.getElementById('newSitePhase').value;
             const owner = document.getElementById('newSiteOwner').value.trim();
-            const isOp = status.includes("營運中");
+            
+            const isOp = statusType.includes("營運中");
+            const statusText = isOp ? "營運中 (發電中)" : `施工中：${phase}`;
 
             sitesData.unshift({
-                id, name, status,
-                progress: isOp ? 100 : 60,
+                id, name, status: statusText,
+                progress: isOp ? 100 : 50,
                 kw: isOp ? 500.0 : 0,
                 temp: 27.0, do: 6.5,
                 health: isOp ? "正常" : "施工中",
@@ -325,18 +375,26 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             renderDashboardSites();
             closeModal('siteModal');
             document.getElementById('siteForm').reset();
+            document.getElementById('constructionPhaseContainer').classList.add('hidden');
         }
 
         function handleNewWO(e) {
             e.preventDefault();
             const site = document.getElementById('woSiteSelect').value;
+            const vendor = document.getElementById('woVendor').value.trim();
+            const zone = document.getElementById('woZone').value.trim();
+            const workers = document.getElementById('woWorkers').value;
+            const leader = document.getElementById('woLeader').value.trim();
             const item = document.getElementById('woItem').value.trim();
             const status = document.getElementById('woStatus').value;
+            const beforeFile = document.getElementById('woBeforePhoto').files[0]?.name || "施工前照片.jpg";
+            const afterFile = document.getElementById('woAfterPhoto').files[0]?.name || "施工後照片.jpg";
             const today = new Date().toISOString().split('T')[0];
 
             workOrders.unshift({
                 id: "WO-" + Math.floor(1000 + Math.random() * 9000),
-                site, item, status, date: today
+                site, vendor, zone, item, workers, leader, status, date: today,
+                beforeImg: beforeFile, afterImg: afterFile
             });
 
             renderWorkOrders();
@@ -417,14 +475,23 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             const list = document.getElementById('work-order-list');
             list.innerHTML = "";
             workOrders.forEach(wo => {
-                const statusColor = wo.status === '已完成' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : wo.status === '處理中' ? 'bg-sky-950 text-sky-300 border-sky-800' : 'bg-amber-950 text-amber-300 border-amber-800';
+                const statusColor = wo.status === '已審核歸檔' ? 'bg-emerald-950 text-emerald-300 border-emerald-800' : wo.status === '施工中' ? 'bg-sky-950 text-sky-300 border-sky-800' : 'bg-amber-950 text-amber-300 border-amber-800';
                 list.innerHTML += `
-                    <div class="bg-slate-950/60 border border-slate-800/80 p-3.5 rounded-xl flex justify-between items-center text-xs">
-                        <div class="space-y-1">
-                            <div class="font-bold text-slate-200">${wo.item}</div>
-                            <div class="text-slate-400 font-mono">${wo.site} · ${wo.date}</div>
+                    <div class="bg-slate-950/60 border border-slate-800/80 p-3.5 rounded-xl space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-slate-200 text-sm">${wo.item}</span>
+                            <span class="px-2.5 py-0.5 rounded-full font-mono border ${statusColor}">${wo.status}</span>
                         </div>
-                        <span class="px-2.5 py-1 rounded-full font-mono border ${statusColor}">${wo.status}</span>
+                        <div class="text-slate-400 font-mono grid grid-cols-2 gap-1">
+                            <span>案場：${wo.site} (${wo.zone})</span>
+                            <span>廠商：${wo.vendor}</span>
+                            <span>出工：${wo.workers}人 ｜ 負責人：${wo.leader}</span>
+                            <span>日期：${wo.date}</span>
+                        </div>
+                        <div class="text-[11px] text-slate-400 flex gap-3 pt-1 border-t border-slate-800/80 font-mono">
+                            <span><i class="fa-solid fa-image text-emerald-400 mr-1"></i>前：${wo.beforeImg}</span>
+                            <span><i class="fa-solid fa-image text-sky-400 mr-1"></i>後：${wo.afterImg}</span>
+                        </div>
                     </div>
                 `;
             });
@@ -432,7 +499,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
 
         // ================= 3D 模型與生命週期動畫核心 =================
         const STAGES=[
-          {t:"PHC樁定位與打樁工程",w:"2 週",tag:"Civil",
+          {t:"基樁定位與打樁工程",w:"2 週",tag:"Civil",
            pts:[
              "使用紗線定位保證支架在一條直線 (公差±20mm)",
              "控制樁頂板孔位方向 (D300/D400 依圖面規範打入)",
@@ -504,7 +571,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
 
         const groups=STAGES.map(()=>{const g=new THREE.Group();g.visible=false;scene.add(g);return g;});
 
-        // 階段 0: PHC樁基座
+        // 階段 0: 基樁基座
         const pileMat = new THREE.MeshStandardMaterial({color:0x94a3b8, roughness:0.5});
         for(let x=-15; x<=15; x+=7.5){
             for(let z=-10; z<=10; z+=10){
