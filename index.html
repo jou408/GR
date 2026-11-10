@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title> AI 智慧監控與建置</title>
+<title>AI 智慧監控與建置</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap">
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -31,7 +31,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                 <i class="fa-solid fa-solar-panel text-emerald-400 text-xl"></i>
             </div>
             <div>
-                <h1 class="text-lg font-bold tracking-wider"> AI 智慧監控與建置</h1>
+                <h1 class="text-lg font-bold tracking-wider">AI 智慧監控與建置</h1>
                 <p class="text-xs text-slate-400">Agrivoltaics Symbiosis & IoT Operations Platform</p>
             </div>
         </div>
@@ -170,8 +170,8 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                     <label class="block text-slate-400 text-xs mb-1">承攬廠商篩選</label>
                     <select id="filterVendor" onchange="renderBillingTable()" class="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-white text-xs font-mono">
                         <option value="ALL">全部廠商</option>
-                        <option value="XX營造工程">XX營造工程</option>
-                        <option value="XX機電實業">XX機電實業</option>
+                        <option value="立誠營造工程">立誠營造工程</option>
+                        <option value="綠能機電實業">綠能機電實業</option>
                     </select>
                 </div>
                 <div class="flex items-end">
@@ -300,7 +300,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
                     </div>
                     <div>
                         <label class="block text-slate-400 text-xs mb-1">現場負責人</label>
-                        <input type="text" id="woLeader" required placeholder="例: 王大名" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
+                        <input type="text" id="woLeader" required placeholder="例: 張工程師" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-white focus:outline-none focus:border-emerald-500">
                     </div>
                 </div>
                 <div>
@@ -421,14 +421,14 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
         }
 
         let sitesData = [
-            { id: "CY-001", name: "嘉義布袋示範案場", status: "營運中 (發電中)", progress: 100, kw: 480.2, temp: 27.1, do: 6.4, health: "正常", owner: "張工" },
+            { id: "CY-001", name: "嘉義布袋示範案場", status: "營運中 (發電中)", progress: 100, kw: 480.2, temp: 27.1, do: 6.4, health: "正常", owner: "張工程師" },
             { id: "TN-002", name: "台南七股光電漁場", status: "營運中 (發電中)", progress: 100, kw: 620.5, temp: 28.3, do: 5.8, health: "需注意 (逆變器溫升)", owner: "林主任" },
             { id: "YL-003", name: "雲林口湖養殖專區", status: "施工中：主樑與V型斜撐組立", progress: 65, kw: 0, temp: 26.5, do: 6.9, health: "施工中", owner: "王工" }
         ];
 
         let workOrders = [
-            { id: "WO-2026-01", site: "雲林口湖養殖專區", vendor: "XX營造工程", zone: "#1 ~ #20", item: "#42 鋼構組立與 V 型抗風斜撐鎖固", workers: 12, leader: "王工", status: "施工中", date: "2026-11-04", beforeImg: "施工前_地質夯實.jpg", afterImg: "施工後_鋼構立柱.jpg" },
-            { id: "WO-2026-02", site: "嘉義布袋示範案場", vendor: "XX機電實業", zone: "#21 ~ #40", item: "B 區水下溶氧感測器校正與維護", workers: 4, leader: "張工", status: "已審核歸檔", date: "2026-11-03", beforeImg: "維護前_感測器附著物.jpg", afterImg: "維護後_校正完成.jpg" }
+            { id: "WO-2026-01", site: "雲林口湖養殖專區", vendor: "立誠營造工程", zone: "#1 ~ #20", item: "#42 鋼構組立與 V 型抗風斜撐鎖固", workers: 12, leader: "王工", status: "施工中", date: "2026-11-04", beforeImg: "施工前_地質夯實.jpg", afterImg: "施工後_鋼構立柱.jpg" },
+            { id: "WO-2026-02", site: "嘉義布袋示範案場", vendor: "綠能機電實業", zone: "#21 ~ #40", item: "B 區水下溶氧感測器校正與維護", workers: 4, leader: "張工程師", status: "已審核歸檔", date: "2026-11-03", beforeImg: "維護前_感測器附著物.jpg", afterImg: "維護後_校正完成.jpg" }
         ];
 
         function renderBillingTable() {
@@ -506,7 +506,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             const worksheet = XLSX.utils.json_to_sheet(excelData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, `${month} 請款明細`);
-            XLSX.writeFile(workbook, `AquaSolar_${month}_請款彙整報表.xlsx`);
+            XLSX.writeFile(workbook, `AISystem_${month}_請款彙整報表.xlsx`);
         }
 
         function handleNewSite(e) {
@@ -654,7 +654,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             });
         }
 
-        // ================= 3D 模型與生命週期動畫核心  =================
+        // ================= 3D 模型與生命週期動畫核心 =================
         const STAGES=[
           {t:"基樁定位與打樁工程",w:"2 週",tag:"Civil",
            pts:[
@@ -770,7 +770,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
             }
         }
 
-        // 階段 3: 檩條與走道
+        // 階段 3: 檩條與走道網
         const purlinGroup = new THREE.Group();
         for(let z=-12; z<=12; z+=2.2){
             const purlin = new THREE.Mesh(new THREE.BoxGeometry(32, 0.15, 0.15), steelMat);
@@ -847,7 +847,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           this.classList.add('bg-emerald-600','text-slate-950','font-bold');
         });
 
-        // 滑鼠互動：左鍵旋轉、右鍵（或 Shift+左鍵）平移、滾輪縮放
         let isDragging=false, isPanning=false, prevMouse={x:0, y:0};
         canvas.onmousedown=e=>{
           if(e.button === 2 || e.shiftKey) {
@@ -857,7 +856,7 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           }
           prevMouse={x:e.clientX, y:e.clientY};
         };
-        canvas.oncontextmenu = e => e.preventDefault(); // 防止右鍵選單彈出
+        canvas.oncontextmenu = e => e.preventDefault();
         window.onmouseup=()=>{ isDragging=false; isPanning=false; };
         
         canvas.onmousemove=e=>{
@@ -865,7 +864,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           if(isDragging) {
             camPos.x-=dx*0.05; camPos.y+=dy*0.05;
           } else if(isPanning) {
-            // 左右/上下平移 (同時平移相機與目標點)
             camPos.x -= dx * 0.05;
             camTarget.x -= dx * 0.05;
             camPos.y += dy * 0.05;
@@ -874,7 +872,6 @@ body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14
           prevMouse={x:e.clientX, y:e.clientY};
         };
 
-        // 滾輪縮放
         canvas.onwheel = e => {
           e.preventDefault();
           camPos.z += e.deltaY * 0.05;
